@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroSmart — Crop Guide & Soil Science</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary-green: #4CAF50; /* Fresh Green */
+    --secondary-green: #8BC34A; /* Leafy Green */
+    --soil-dark: #5D4037; /* Deep Text Color */
+    --cream-white: #F9FBE7; /* Soft Off-White Background */
+}
+body { 
+    font-family: 'Open Sans', sans-serif; 
+    background-color: var(--cream-white); 
+    color: var(--soil-dark);
+    margin:0; 
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+h1, h2, h3, .logo { 
+    font-family: 'Quicksand', sans-serif; 
+    font-weight: 700; 
+    color: var(--soil-dark); 
+}
+.logo { font-size: 2rem; } 
+
+.navbar { 
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: fixed; 
+    top:0; 
+    width:100%; 
+    z-index:100; 
+}
+.section-card {
+    background: white;
+    border-radius: 1.5rem; /* Softer, more organic look */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    padding: 2.5rem;
+    transition: all 0.3s;
+    border: 1px solid var(--secondary-green);
+}
+.section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* Animations (Minimal JS required) */
+.animate-slide-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.animate-slide-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+</style>
+</head>
+<body class="antialiased">
+
+<nav class="navbar fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div>
+        <div class="logo text-2xl text-[var(--primary-green)]">AgroSmart</div>
+        <div class="text-xs text-gray-600 -mt-1">Smart Soil Farming</div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-gray-700 font-medium text-[var(--primary-green)]">Home</a>
+        <a href="about.html" class="text-gray-700 font-medium">About Us</a>
+        <a href="farmers.html" class="text-gray-700 font-medium">Farmers</a>
+        <a href="crops.html" class="text-gray-700 font-medium">Crops</a>
+
+        <button id="btn-login" class="px-4 py-2 bg-[var(--primary-green)] text-white rounded-full hover:bg-green-700 transition font-medium">Login</button>
+        <button id="btn-register" class="px-4 py-2 border border-[var(--primary-green)] text-[var(--primary-green)] rounded-full hover:bg-[var(--primary-green)] hover:text-white transition font-medium">Register</button>
+      </div>
+    </div>
+  </nav>
+
+<section class="relative pt-32 pb-20 bg-[var(--secondary-green)]/10">
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="text-center animate-slide-up">
+            <h1 class="text-5xl md:text-6xl font-bold mb-4 text-[var(--soil-dark)]">The Science of Yield Prediction</h1>
+            <p class="text-xl max-w-3xl mx-auto text-gray-700">
+                Understanding what to grow starts with understanding the soil. Our proprietary database covers optimal conditions for hundreds of global crops.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="principles" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-8">
+        <h2 class="text-5xl text-center mb-12 animate-slide-up text-[var(--primary-green)]">Regenerative Soil Health Pillars</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="section-card text-center animate-slide-up delay-100">
+                <div class="text-5xl mb-4 text-[var(--secondary-green)]">💧</div>
+                <h3 class="text-2xl font-bold mb-2 text-[var(--soil-dark)]">Moisture & Structure</h3>
+                <p class="text-gray-600">Focus on organic matter to improve water retention and prevent runoff and erosion. Essential for all crops.</p>
+            </div>
+            <div class="section-card text-center animate-slide-up delay-200">
+                <div class="text-5xl mb-4 text-[var(--secondary-green)]">🔬</div>
+                <h3 class="text-2xl font-bold mb-2 text-[var(--soil-dark)]">Nutrient Balance (NPK)</h3>
+                <p class="text-gray-600">Precision monitoring of Nitrogen, Phosphorus, and Potassium to match the crop's exact growth stage.</p>
+            </div>
+            <div class="section-card text-center animate-slide-up delay-300">
+                <div class="text-5xl mb-4 text-[var(--secondary-green)]">🦠</div>
+                <h3 class="text-2xl font-bold mb-2 text-[var(--soil-dark)]">Microbial Diversity</h3>
+                <p class="text-gray-600">Fostering beneficial microbes for natural disease suppression and increased nutrient availability.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="spotlight" class="py-20 bg-[var(--cream-white)]">
+    <div class="max-w-7xl mx-auto px-8">
+        <h2 class="text-5xl text-center mb-12 animate-slide-up">Crop Spotlight: High-Yield Corn (Maize)</h2>
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="animate-slide-up delay-100">
+                <img src="/img/lush-corn.jpg" alt="Lush corn field" class="rounded-2xl shadow-2xl w-full h-auto object-cover border-4 border-[var(--primary-green)]">
+            </div>
+            <div class="section-card animate-slide-up delay-200">
+                <h3 class="text-3xl font-bold mb-4 text-[var(--primary-green)]">Optimal Growing Profile</h3>
+                <div class="space-y-3">
+                    <p class="text-lg"><span class="font-semibold text-[var(--soil-dark)]">Soil Type:</span> Deep, well-drained loam or silt loam.</p>
+                    <p class="text-lg"><span class="font-semibold text-[var(--soil-dark)]">Ideal pH Range:</span> $6.0 - 6.8$ (Slightly acidic is best).</p>
+                    <p class="text-lg"><span class="font-semibold text-[var(--soil-dark)]">Key Nutrient:</span> Nitrogen. Critical during the V6 (six-leaf) stage.</p>
+                    <p class="text-lg"><span class="font-semibold text-[var(--soil-dark)]">Temperature Range:</span> $15^\circ \text{C}$ to $30^\circ \text{C}$ for healthy growth.</p>
+                </div>
+                <div class="mt-6">
+                    <button class="px-6 py-3 bg-[var(--primary-green)] text-white font-semibold rounded-full hover:bg-green-700 transition">
+                        View Full Corn Management Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="py-20 bg-[var(--primary-green)]">
+    <div class="max-w-xl mx-auto px-8 text-center">
+        <h2 class="text-5xl font-bold mb-4 text-white animate-slide-up">Get Specific Crop Recommendations</h2>
+        <p class="text-xl text-gray-100 mb-10 animate-slide-up delay-100">Our recommendations are tailored to your exact plot. Get started today.</p>
+        
+        <form id="contactForm" class="grid gap-6 p-8 bg-white rounded-2xl shadow-2xl border-4 border-[var(--secondary-green)] animate-slide-up delay-200">
+            <input type="text" id="contactName" placeholder="Full Name" 
+                class="border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] focus:ring-2 focus:ring-[var(--primary-green)] transition" 
+                required/>
+            
+            <input type="email" id="contactEmail" placeholder="Email" 
+                class="border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] focus:ring-2 focus:ring-[var(--primary-green)] transition" 
+                required/>
+            
+            <input type="tel" id="contactPhone" placeholder="Phone Number (10 digits)" 
+                class="border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] focus:ring-2 focus:ring-[var(--primary-green)] transition" 
+                required 
+                pattern="[0-9]{10}" 
+                title="Please enter a 10-digit phone number using only numbers (0-9)."/>
+            
+            <textarea id="contactMsg" placeholder="I'm interested in growing..." rows="4" 
+                class="border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] focus:ring-2 focus:ring-[var(--primary-green)] transition" 
+                required></textarea>
+            
+            <button type="submit" 
+                class="bg-[var(--primary-green)] text-white font-bold text-lg p-3 rounded-lg hover:bg-green-700 transition transform hover:scale-[1.01]">
+                Send My Soil Sample Request
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- FOOTER (upgraded) -->
+  <footer class="bg-[#0f2912] text-white py-12 border-t-4 border-[var(--primary-green)]">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 grid md:grid-cols-4 gap-8">
+      <div>
+        <div class="text-2xl font-bold text-[var(--secondary-green)]">AgroSmart</div>
+        <p class="mt-3 text-gray-200/90">Smart Agriculture | Smarter Future. Technology and farmer-first programs to enable productive, sustainable farming.</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-[var(--secondary-green)] mb-3">Quick Links</h4>
+        <ul class="space-y-2 text-gray-200">
+          <li><a href="index.html" class="hover:underline">Home</a></li>
+          <li><a href="about.html" class="hover:underline">About Us</a></li>
+          <li><a href="farmers.html" class="hover:underline">Farmers</a></li>
+          <li><a href="crops.html" class="hover:underline">Crops</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-[var(--secondary-green)] mb-3">Contact</h4>
+        <p class="text-gray-200">📍 Delhi, India</p>
+        <p class="text-gray-200">📞 +91 98765 43210</p>
+        <p class="text-gray-200">✉ support@agrosmart.com</p>
+      </div>
+
+      <div>
+        <h4 class="font-semibold text-[var(--secondary-green)] mb-3">Follow Us</h4>
+        <div class="flex gap-3">
+          <a class="text-2xl" href="#" aria-label="website">🌐</a>
+          <a class="text-2xl" href="#" aria-label="facebook">📘</a>
+          <a class="text-2xl" href="#" aria-label="instagram">📸</a>
+          <a class="text-2xl" href="#" aria-label="youtube">▶️</a>
+        </div>
+
+        <div class="mt-6">
+          <p class="text-gray-300 text-sm">© 2025 AgroSmart — All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<div id="loginModal" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div class="bg-white p-10 rounded-xl w-11/12 md:w-96 relative section-card">
+        <button id="closeLogin" class="absolute top-4 right-4 text-gray-600 hover:text-red-500 font-bold text-xl">✕</button>
+        <h2 class="text-3xl font-bold mb-6 text-center text-[var(--soil-dark)]">Welcome Back</h2>
+        <form id="loginForm" class="space-y-4">
+            <input type="email" id="loginEmail" placeholder="Email" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required/>
+            <input type="password" id="loginPassword" placeholder="Password" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required/>
+            <button type="submit" 
+                class="w-full bg-[var(--primary-green)] text-white font-semibold p-3 rounded-lg hover:bg-green-700 transition">
+                Login
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="registerModal" style="display:none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50">
+    <div class="bg-white p-10 rounded-xl w-11/12 md:w-96 relative section-card">
+        <button id="closeRegister" class="absolute top-4 right-4 text-gray-600 hover:text-red-500 font-bold text-xl">✕</button>
+        <h2 class="text-3xl font-bold mb-6 text-center text-[var(--soil-dark)]">Join AgroSmart</h2>
+        <form id="registerForm" class="space-y-4">
+            <input type="text" id="regName" placeholder="Full Name" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required/>
+            <input type="email" id="regEmail" placeholder="Email" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required/>
+            <input type="tel" id="regPhone" placeholder="Phone Number (10 digits)" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required 
+                pattern="[0-9]{10}" 
+                title="Please enter a 10-digit phone number using only numbers (0-9)."/>
+            <input type="password" id="regPassword" placeholder="Password (min 6 characters)" 
+                class="w-full border-2 border-gray-300 p-3 rounded-lg focus:border-[var(--primary-green)] transition" 
+                required 
+                minlength="6" 
+                title="Password must be at least 6 characters long"/>
+            <button type="submit" 
+                class="w-full bg-[var(--primary-green)] text-white font-semibold p-3 rounded-lg hover:bg-green-700 transition">
+                Create Account
+            </button>
+        </form>
+    </div>
+</div>
+
+   <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+
+        // ---------------------
+        // FIREBASE CONFIG
+        // ---------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyD7gunTzcn5MGt2HhKohq1CT_YhXLCvuE0",
+            authDomain: "soil-farming-31fdc.firebaseapp.com",
+            databaseURL: "https://soil-farming-31fdc-default-rtdb.firebaseio.com",
+            projectId: "soil-farming-31fdc",
+            storageBucket: "soil-farming-31fdc.firebasestorage.app",
+            messagingSenderId: "218449894591",
+            appId: "1:218449894591:web:cd5a0ba2ff95e8c3bf3a0a",
+            measurementId: "G-CZK17511XC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const rtdb = getDatabase(app);
+
+        // ---------------------
+        // SIMPLE TOAST
+        // ---------------------
+        function showMessage(msg) {
+            alert(msg);
+        }
+
+
+        // ---------------------
+        // LOGIN
+        // ---------------------
+        async function loginUser(email, password) {
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                showMessage("Login successful!");
+
+                // Hardcoded Email Check for Redirection
+                if (user.email === "admin@soilagent.com") {
+                    window.location.href = "admin-dashboard.html";
+                } else {
+                    window.location.href = "user-dashboard.html";
+                }
+
+            } catch (error) { // Changed 'e' to 'error' for clarity
+                let errorMessage = "Invalid email or password";
+                // Check for common auth errors
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    errorMessage = "Invalid email or password.";
+                }
+                showMessage(errorMessage);
+                console.error("Login error:", error);
+            }
+        }
+
+
+        // ---------------------
+        // REGISTER (RTDB Fixed with Role Check & Redirection)
+        // ---------------------
+        async function registerUser(name, email, phone, password) {
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Determine role for RTDB based on hardcoded email
+                const role = (email === "admin@soilagent.com") ? "admin" : "user";
+
+                // Save user info in REALTIME DATABASE (RTDB) using 'set'
+                await set(ref(rtdb, "users/" + user.uid), {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    role: role, // Set role based on hardcoded check
+                    createdAt: Date.now()
+                });
+
+                showMessage("Registration successful! Redirecting...");
+                registerModal.classList.add("hidden"); // Close modal
+
+                // Hardcoded Email Check for Redirection
+                if (user.email === "admin@soilagent.com") {
+                    window.location.href = "admin-dashboard.html";
+                } else {
+                    window.location.href = "user-dashboard.html";
+                }
+
+            } catch (error) { // Changed 'e' to 'error' for clarity
+                let errorMessage = "Registration failed: " + error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = "This email is already registered. Please try logging in.";
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = "Password should be at least 6 characters.";
+                }
+                showMessage(errorMessage);
+                console.error("Registration error:", error);
+            }
+        }
+
+        // ---------------------
+        // MODAL LOGIC (same as before)
+        // ---------------------
+        const loginModal = document.getElementById('loginModal');
+        const registerModal = document.getElementById('registerModal');
+
+        document.getElementById('btn-login').addEventListener('click', () => loginModal.classList.remove('hidden'));
+        document.getElementById('btn-register').addEventListener('click', () => registerModal.classList.remove('hidden'));
+        document.getElementById('closeLogin').addEventListener('click', () => loginModal.classList.add('hidden'));
+        document.getElementById('closeRegister').addEventListener('click', () => registerModal.classList.add('hidden'));
+
+        loginModal.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.classList.add('hidden'); });
+        registerModal.addEventListener('click', (e) => { if (e.target === registerModal) registerModal.classList.add('hidden'); });
+
+
+        // ---------------------
+        // FORM HANDLERS
+        // ---------------------
+        document.getElementById("loginForm")?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value.trim();
+            loginUser(email, password);
+        });
+
+        document.getElementById("registerForm")?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const name = regName.value.trim();
+            const email = regEmail.value.trim();
+            const phone = regPhone.value.trim();
+            const password = regPassword.value.trim();
+            registerUser(name, email, phone, password);
+        });
+
+        document.getElementById("contactForm")?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            showMessage("Message sent!");
+        });
+
+
+        // ---------------------
+        // INTERSECTION ANIMATION (same as before)
+        // ---------------------
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        document.querySelectorAll('.animate-slide-up').forEach(el => observer.observe(el));
+
+
+        // -----------------------------
+        // AUTO LOGIN REDIRECT (same as index.html)
+        // -----------------------------
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+
+                if (user.email === "admin@soilagent.com") {
+                    window.location.href = "admin-dashboard.html";
+                } else {
+                    window.location.href = "user-dashboard.html";
+                }
+
+            }
+        });
+    </script>
+
+</body>
+</html>

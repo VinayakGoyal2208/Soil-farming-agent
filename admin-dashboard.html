@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AgroSmart — Admin Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-green: #4CAF50;
+            --soil-dark: #5D4037;
+            --cream-white: #F9FBE7;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: var(--cream-white);
+            color: var(--soil-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        h1,
+        h2,
+        h3,
+        .logo {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: var(--soil-dark)
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid rgba(139, 195, 74, 0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06)
+        }
+
+        .muted {
+            color: #6b7280
+        }
+
+        .small {
+            font-size: .9rem
+        }
+
+        .table-scroll {
+            max-height: 480px;
+            overflow: auto
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+            <div>
+                <div class="logo text-2xl text-[var(--primary-green)]">AgroSmart Admin</div>
+                <div class="text-xs text-gray-600 -mt-1">Admin Dashboard</div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-gray-700 font-medium text-[var(--primary-green)]">Home</a>
+                <a href="user-dashboard.html" class="text-gray-700 font-medium">User Dashboard</a>
+                <span id="adminEmail" class="text-sm text-[var(--soil-dark)]/80 italic"></span>
+                <button id="btnLogout"
+                    class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition font-medium text-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <section class="pt-28 pb-6 bg-[var(--primary-green)]/90 text-white">
+        <div class="max-w-7xl mx-auto px-8">
+            <h1 class="text-4xl md:text-5xl font-bold">Admin Dashboard</h1>
+            <p class="mt-2 text-lg">Manage soil reports, distributors and users.</p>
+        </div>
+    </section>
+
+    <!-- MAIN -->
+    <main class="max-w-7xl mx-auto px-8 py-10 space-y-8">
+
+        <!-- Forms row -->
+        <div class="grid md:grid-cols-2 gap-8">
+
+            <!-- Soil Form -->
+            <section class="section-card">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">Soil — Create / Edit</h2>
+                <form id="soilForm" class="grid grid-cols-1 gap-2">
+                    <input id="soil_sampleId" class="p-2 border rounded" placeholder="Sample ID (optional)">
+                    <input id="soil_farmName" class="p-2 border rounded" placeholder="Farm Name">
+                    <input id="soil_farmerName" class="p-2 border rounded" placeholder="Farmer Name">
+                    <input id="soil_userId" class="p-2 border rounded" placeholder="Farmer UID (userId)">
+                    <input id="soil_dateCollected" class="p-2 border rounded" placeholder="Date Collected (YYYY-MM-DD)">
+                    <input id="soil_dateAnalyzed" class="p-2 border rounded" placeholder="Date Analyzed (YYYY-MM-DD)">
+                    <input id="soil_texture" class="p-2 border rounded" placeholder="Texture">
+                    <div class="grid grid-cols-3 gap-2">
+                        <input id="soil_ph" class="p-2 border rounded" placeholder="pH">
+                        <input id="soil_n" class="p-2 border rounded" placeholder="N">
+                        <input id="soil_p" class="p-2 border rounded" placeholder="P">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <input id="soil_k" class="p-2 border rounded" placeholder="K">
+                        <input id="soil_ec" class="p-2 border rounded" placeholder="EC">
+                        <input id="soil_oc" class="p-2 border rounded" placeholder="OC">
+                    </div>
+                    <textarea id="soil_notes" class="p-2 border rounded" placeholder="Notes"></textarea>
+
+                    <div class="flex gap-3">
+                        <button id="soilSaveBtn" type="button"
+                            class="px-4 py-2 bg-[var(--primary-green)] text-white rounded">Save Soil</button>
+                        <button id="soilUpdateBtn" type="button"
+                            class="px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Soil</button>
+                        <button id="soilCancelBtn" type="button" class="px-4 py-2 border rounded hidden">Cancel</button>
+                    </div>
+                    <div id="soilMsg" class="muted small mt-2"></div>
+                </form>
+            </section>
+
+            <!-- Distributor Form -->
+            <section class="section-card">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">Distributor — Create / Edit</h2>
+                <form id="distForm" class="grid grid-cols-1 gap-2">
+                    <input id="dist_name" class="p-2 border rounded" placeholder="Name">
+                    <input id="dist_email" class="p-2 border rounded" placeholder="Email">
+                    <input id="dist_phone" class="p-2 border rounded" placeholder="Phone">
+                    <input id="dist_licenseId" class="p-2 border rounded" placeholder="License ID">
+                    <input id="dist_pincode" class="p-2 border rounded" placeholder="Pincode">
+                    <textarea id="dist_address" class="p-2 border rounded" placeholder="Address"></textarea>
+                    <input id="dist_assignedUserId" class="p-2 border rounded" placeholder="Assigned User ID (single)">
+                    <input id="dist_assignedToUserIds" class="p-2 border rounded"
+                        placeholder="Assigned UIDs (comma separated)">
+
+                    <div class="flex gap-3">
+                        <button id="distSaveBtn" type="button"
+                            class="px-4 py-2 bg-[var(--primary-green)] text-white rounded">Save Distributor</button>
+                        <button id="distUpdateBtn" type="button"
+                            class="px-4 py-2 bg-yellow-500 text-white rounded hidden">Update Distributor</button>
+                        <button id="distCancelBtn" type="button" class="px-4 py-2 border rounded hidden">Cancel</button>
+                    </div>
+                    <div id="distMsg" class="muted small mt-2"></div>
+                </form>
+            </section>
+
+        </div>
+
+        <!-- Lists row -->
+        <div class="grid md:grid-cols-3 gap-8">
+
+            <!-- Soil List -->
+            <section class="section-card">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">All Soil Samples</h2>
+                <div id="soilList" class="table-scroll space-y-3 small muted">Loading...</div>
+            </section>
+
+            <!-- Distributor List -->
+            <section class="section-card">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">All Distributors</h2>
+                <div id="distList" class="table-scroll space-y-3 small muted">Loading...</div>
+            </section>
+
+            <!-- Users List -->
+            <section class="section-card">
+                <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">All Users</h2>
+                <div id="userList" class="table-scroll space-y-3 small muted">Loading...</div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-[#0f2912] text-white py-8 text-center">
+        <div class="max-w-7xl mx-auto">© 2025 AgroSmart — Admin</div>
+    </footer>
+
+    <!-- Firebase logic -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+        getDatabase, ref as rtdbRef, push, set, update, remove, get, child
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    // ---------- CONFIG ----------
+    const firebaseConfig = {
+        apiKey: "AIzaSyD7gunTzcn5MGt2HhKohq1CT_YhXLCvuE0",
+        authDomain: "soil-farming-31fdc.firebaseapp.com",
+        databaseURL: "https://soil-farming-31fdc-default-rtdb.firebaseio.com",
+        projectId: "soil-farming-31fdc",
+        storageBucket: "soil-farming-31fdc.firebasestorage.app",
+        messagingSenderId: "218449894591",
+        appId: "1:218449894591:web:cd5a0ba2ff95e8c3bf3a0a",
+        measurementId: "G-CZK17511XC"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    // UI refs
+    const adminEmail = document.getElementById('adminEmail');
+    const btnLogout = document.getElementById('btnLogout');
+
+    const soilFormEls = {
+        sampleId: document.getElementById('soil_sampleId'),
+        farmName: document.getElementById('soil_farmName'),
+        farmerName: document.getElementById('soil_farmerName'),
+        userId: document.getElementById('soil_userId'),
+        dateCollected: document.getElementById('soil_dateCollected'),
+        dateAnalyzed: document.getElementById('soil_dateAnalyzed'),
+        texture: document.getElementById('soil_texture'),
+        ph: document.getElementById('soil_ph'),
+        n: document.getElementById('soil_n'),
+        p: document.getElementById('soil_p'),
+        k: document.getElementById('soil_k'),
+        ec: document.getElementById('soil_ec'),
+        oc: document.getElementById('soil_oc'),
+        notes: document.getElementById('soil_notes'),
+        saveBtn: document.getElementById('soilSaveBtn'),
+        updateBtn: document.getElementById('soilUpdateBtn'),
+        cancelBtn: document.getElementById('soilCancelBtn'),
+        msg: document.getElementById('soilMsg')
+    };
+
+    const distFormEls = {
+        name: document.getElementById('dist_name'),
+        email: document.getElementById('dist_email'),
+        phone: document.getElementById('dist_phone'),
+        licenseId: document.getElementById('dist_licenseId'),
+        pincode: document.getElementById('dist_pincode'),
+        address: document.getElementById('dist_address'),
+        assignedUserId: document.getElementById('dist_assignedUserId'),
+        assignedToUserIds: document.getElementById('dist_assignedToUserIds'),
+        saveBtn: document.getElementById('distSaveBtn'),
+        updateBtn: document.getElementById('distUpdateBtn'),
+        cancelBtn: document.getElementById('distCancelBtn'),
+        msg: document.getElementById('distMsg')
+    };
+
+    const soilListEl = document.getElementById('soilList');
+    const distListEl = document.getElementById('distList');
+    const userListEl = document.getElementById('userList');
+
+    // edit keys
+    let editingSoilKey = null;
+    let editingDistKey = null;
+
+    // ---------- AUTH + ROLE CHECK ----------
+    async function isAdmin(uid) {
+        try {
+            const snap = await get(child(rtdbRef(db), `users/${uid}/role`));
+            return snap.exists() && snap.val() === 'admin';
+        } catch (e) {
+            console.error('role check err', e);
+            return false;
+        }
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = 'index.html';
+            return;
+        }
+        adminEmail.textContent = user.email || '';
+        const ok = await isAdmin(user.uid);
+        if (!ok) {
+            // redirect non-admin to user dashboard
+            window.location.href = 'user-dashboard.html';
+            return;
+        }
+        // load all lists
+        loadAllSoil();
+        loadAllDistributors();
+        loadAllUsers();
+    });
+
+    btnLogout.addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    });
+
+    // ---------- HELPERS ----------
+    function clearSoilForm() {
+        Object.keys(soilFormEls).forEach(k => {
+            if (['saveBtn', 'updateBtn', 'cancelBtn', 'msg'].includes(k)) return;
+            soilFormEls[k].value = '';
+        });
+        soilFormEls.msg.textContent = '';
+        soilFormEls.saveBtn.classList.remove('hidden');
+        soilFormEls.updateBtn.classList.add('hidden');
+        soilFormEls.cancelBtn.classList.add('hidden');
+        editingSoilKey = null;
+    }
+
+    function fillSoilForm(obj) {
+        // Ensure numeric values are displayed correctly
+        soilFormEls.sampleId.value = obj.sampleId || '';
+        soilFormEls.farmName.value = obj.farmName || '';
+        soilFormEls.farmerName.value = obj.farmerName || '';
+        soilFormEls.userId.value = obj.userId || '';
+        soilFormEls.dateCollected.value = obj.dateCollected || '';
+        soilFormEls.dateAnalyzed.value = obj.dateAnalyzed || '';
+        soilFormEls.texture.value = obj.texture || '';
+        soilFormEls.ph.value = obj.ph !== undefined ? obj.ph : '';
+        soilFormEls.n.value = obj.n !== undefined ? obj.n : '';
+        soilFormEls.p.value = obj.p !== undefined ? obj.p : '';
+        soilFormEls.k.value = obj.k !== undefined ? obj.k : '';
+        soilFormEls.ec.value = obj.ec !== undefined ? obj.ec : '';
+        soilFormEls.oc.value = obj.oc !== undefined ? obj.oc : '';
+        soilFormEls.notes.value = obj.notes || '';
+    }
+
+    function clearDistForm() {
+        Object.keys(distFormEls).forEach(k => {
+            if (['saveBtn', 'updateBtn', 'cancelBtn', 'msg'].includes(k)) return;
+            distFormEls[k].value = '';
+        });
+        distFormEls.msg.textContent = '';
+        distFormEls.saveBtn.classList.remove('hidden');
+        distFormEls.updateBtn.classList.add('hidden');
+        distFormEls.cancelBtn.classList.add('hidden');
+        editingDistKey = null;
+    }
+
+    function fillDistForm(obj) {
+        distFormEls.name.value = obj.name || '';
+        distFormEls.email.value = obj.email || '';
+        distFormEls.phone.value = obj.phone || '';
+        distFormEls.licenseId.value = obj.licenseId || '';
+        distFormEls.pincode.value = obj.pincode || '';
+        distFormEls.address.value = obj.address || '';
+        distFormEls.assignedUserId.value = obj.assignedUserId || '';
+        distFormEls.assignedToUserIds.value = Array.isArray(obj.assignedToUserIds) ? obj.assignedToUserIds.join(', ') : (obj.assignedToUserIds || '');
+    }
+
+    /**
+     * Converts a value to a float, returning null if conversion fails or value is empty.
+     * @param {string} val 
+     * @returns {number|null}
+     */
+    function toFloatOrNull(val) {
+        const trimmed = val.trim();
+        if (!trimmed) return null;
+        const num = parseFloat(trimmed);
+        return isNaN(num) ? null : num;
+    }
+
+    // ---------- CRUD: Soil ----------
+    soilFormEls.saveBtn.addEventListener('click', async () => {
+        soilFormEls.msg.textContent = 'Saving...';
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser || !(await isAdmin(currentUser.uid))) throw new Error('Not authorized');
+
+            // Basic Validation Check
+            if (!soilFormEls.farmName.value.trim() || !soilFormEls.userId.value.trim() || !soilFormEls.ph.value.trim()) {
+                throw new Error('Farm Name, User ID, and pH are required fields.');
+            }
+            
+            const data = {
+                sampleId: soilFormEls.sampleId.value.trim() || null,
+                farmName: soilFormEls.farmName.value.trim(),
+                farmerName: soilFormEls.farmerName.value.trim(),
+                userId: soilFormEls.userId.value.trim(),
+                dateCollected: soilFormEls.dateCollected.value.trim(),
+                dateAnalyzed: soilFormEls.dateAnalyzed.value.trim(),
+                texture: soilFormEls.texture.value.trim(),
+                
+                // Convert essential fields to numbers
+                ph: toFloatOrNull(soilFormEls.ph.value),
+                n: toFloatOrNull(soilFormEls.n.value),
+                p: toFloatOrNull(soilFormEls.p.value),
+                k: toFloatOrNull(soilFormEls.k.value),
+                ec: toFloatOrNull(soilFormEls.ec.value),
+                oc: toFloatOrNull(soilFormEls.oc.value),
+
+                notes: soilFormEls.notes.value.trim(),
+                createdAt: new Date().toISOString()
+            };
+            const newRef = push(rtdbRef(db, 'soil_samples'));
+            await set(newRef, data);
+            soilFormEls.msg.textContent = 'Saved.';
+            clearSoilForm();
+            loadAllSoil();
+        } catch (err) {
+            console.error('save soil', err);
+            soilFormEls.msg.textContent = 'Error: ' + (err.message || err);
+        }
+    });
+
+    soilFormEls.updateBtn.addEventListener('click', async () => {
+        if (!editingSoilKey) return;
+        soilFormEls.msg.textContent = 'Updating...';
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser || !(await isAdmin(currentUser.uid))) throw new Error('Not authorized');
+            
+            // Basic Validation Check
+            if (!soilFormEls.farmName.value.trim() || !soilFormEls.userId.value.trim() || !soilFormEls.ph.value.trim()) {
+                throw new Error('Farm Name, User ID, and pH are required fields.');
+            }
+
+            const data = {
+                sampleId: soilFormEls.sampleId.value.trim() || null,
+                farmName: soilFormEls.farmName.value.trim(),
+                farmerName: soilFormEls.farmerName.value.trim(),
+                userId: soilFormEls.userId.value.trim(),
+                dateCollected: soilFormEls.dateCollected.value.trim(),
+                dateAnalyzed: soilFormEls.dateAnalyzed.value.trim(),
+                texture: soilFormEls.texture.value.trim(),
+                
+                // Convert essential fields to numbers
+                ph: toFloatOrNull(soilFormEls.ph.value),
+                n: toFloatOrNull(soilFormEls.n.value),
+                p: toFloatOrNull(soilFormEls.p.value),
+                k: toFloatOrNull(soilFormEls.k.value),
+                ec: toFloatOrNull(soilFormEls.ec.value),
+                oc: toFloatOrNull(soilFormEls.oc.value),
+                
+                notes: soilFormEls.notes.value.trim(),
+                updatedAt: new Date().toISOString()
+            };
+            await update(rtdbRef(db, `soil_samples/${editingSoilKey}`), data);
+            soilFormEls.msg.textContent = 'Updated.';
+            clearSoilForm();
+            loadAllSoil();
+        } catch (err) {
+            console.error('update soil', err);
+            soilFormEls.msg.textContent = 'Error: ' + (err.message || err);
+        }
+    });
+
+    soilFormEls.cancelBtn.addEventListener('click', clearSoilForm);
+
+    async function loadAllSoil() {
+        soilListEl.innerHTML = 'Loading...';
+        try {
+            const snap = await get(rtdbRef(db, 'soil_samples'));
+            if (!snap.exists()) {
+                soilListEl.innerHTML = '<div class="muted">No soil samples yet.</div>';
+                return;
+            }
+            const obj = snap.val();
+            const entries = Object.entries(obj).sort((a, b) => new Date(b[1].createdAt || 0) - new Date(a[1].createdAt || 0));
+            soilListEl.innerHTML = '';
+            entries.forEach(([key, val]) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'p-3 border rounded flex justify-between items-start';
+                wrapper.innerHTML = `
+            <div>
+              <div class="font-semibold">${val.sampleId || key} — ${val.farmName || ''}</div>
+              <div class="small muted">${val.farmerName || ''} • ${val.userId || ''}</div>
+              <div class="small muted">Collected: ${val.dateCollected || '-'} | Analyzed: ${val.dateAnalyzed || '-'}</div>
+              <div class="small muted">N:${val.n !== null ? val.n : '-'} P:${val.p !== null ? val.p : '-'} K:${val.k !== null ? val.k : '-'} pH:${val.ph !== null ? val.ph : '-'}</div>
+              <div class="small muted">Notes: ${val.notes || '-'}</div>
+            </div>
+            <div class="text-right">
+              <button data-key="${key}" class="edit-soil px-2 py-1 mr-2 border rounded text-sm">Edit</button>
+              <button data-key="${key}" class="del-soil px-2 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
+            </div>
+          `;
+                wrapper.querySelector('.edit-soil').addEventListener('click', async (e) => {
+                    const key = e.currentTarget.dataset.key;
+                    const snap = await get(rtdbRef(db, `soil_samples/${key}`));
+                    if (!snap.exists()) return;
+                    fillSoilForm(snap.val());
+                    editingSoilKey = key;
+                    soilFormEls.saveBtn.classList.add('hidden');
+                    soilFormEls.updateBtn.classList.remove('hidden');
+                    soilFormEls.cancelBtn.classList.remove('hidden');
+                    soilFormEls.msg.textContent = 'Editing...';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                
+                wrapper.querySelector('.del-soil').addEventListener('click', async (e) => {
+                    const key = e.currentTarget.dataset.key;
+                    if (!confirm('Delete this soil sample?')) return;
+                    try {
+                        await remove(rtdbRef(db, `soil_samples/${key}`));
+                        loadAllSoil();
+                    } catch (err) {
+                        console.error('delete soil', err);
+                        alert('Delete failed');
+                    }
+                });
+                
+                soilListEl.appendChild(wrapper);
+            });
+
+        } catch (err) {
+            console.error('load soil', err);
+            soilListEl.innerHTML = '<div class="muted">Error loading soil samples.</div>';
+        }
+    }
+
+    // ---------- CRUD: Distributors ----------
+    distFormEls.saveBtn.addEventListener('click', async () => {
+        distFormEls.msg.textContent = 'Saving...';
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser || !(await isAdmin(currentUser.uid))) throw new Error('Not authorized');
+
+            const assignedTo = distFormEls.assignedToUserIds.value.split(',').map(s => s.trim()).filter(Boolean);
+            const data = {
+                name: distFormEls.name.value.trim(),
+                email: distFormEls.email.value.trim(),
+                phone: distFormEls.phone.value.trim(),
+                licenseId: distFormEls.licenseId.value.trim(),
+                pincode: distFormEls.pincode.value.trim(),
+                address: distFormEls.address.value.trim(),
+                assignedUserId: distFormEls.assignedUserId.value.trim() || null,
+                assignedToUserIds: assignedTo,
+                createdAt: new Date().toISOString()
+            };
+            const newRef = push(rtdbRef(db, 'distributors'));
+            await set(newRef, data);
+            distFormEls.msg.textContent = 'Saved.';
+            clearDistForm();
+            loadAllDistributors();
+        } catch (err) {
+            console.error('save dist', err);
+            distFormEls.msg.textContent = 'Error: ' + (err.message || err);
+        }
+    });
+
+    distFormEls.updateBtn.addEventListener('click', async () => {
+        if (!editingDistKey) return;
+        distFormEls.msg.textContent = 'Updating...';
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser || !(await isAdmin(currentUser.uid))) throw new Error('Not authorized');
+
+            const assignedTo = distFormEls.assignedToUserIds.value.split(',').map(s => s.trim()).filter(Boolean);
+            const data = {
+                name: distFormEls.name.value.trim(),
+                email: distFormEls.email.value.trim(),
+                phone: distFormEls.phone.value.trim(),
+                licenseId: distFormEls.licenseId.value.trim(),
+                pincode: distFormEls.pincode.value.trim(),
+                address: distFormEls.address.value.trim(),
+                assignedUserId: distFormEls.assignedUserId.value.trim() || null,
+                assignedToUserIds: assignedTo,
+                updatedAt: new Date().toISOString()
+            };
+            await update(rtdbRef(db, `distributors/${editingDistKey}`), data);
+            distFormEls.msg.textContent = 'Updated.';
+            clearDistForm();
+            loadAllDistributors();
+        } catch (err) {
+            console.error('update dist', err);
+            distFormEls.msg.textContent = 'Error: ' + (err.message || err);
+        }
+    });
+
+    distFormEls.cancelBtn.addEventListener('click', clearDistForm);
+
+    async function loadAllDistributors() {
+        distListEl.innerHTML = 'Loading...';
+        try {
+            const snap = await get(rtdbRef(db, 'distributors'));
+            if (!snap.exists()) {
+                distListEl.innerHTML = '<div class="muted">No distributors yet.</div>';
+                return;
+            }
+            const obj = snap.val();
+            const entries = Object.entries(obj).sort((a, b) => new Date(b[1].createdAt || 0) - new Date(a[1].createdAt || 0));
+            distListEl.innerHTML = '';
+            entries.forEach(([key, val]) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'p-3 border rounded flex justify-between items-start';
+                wrapper.innerHTML = `
+            <div>
+              <div class="font-semibold">${val.name || 'Distributor'}</div>
+              <div class="small muted">${val.email || ''} • ${val.phone || ''}</div>
+              <div class="small muted">License: ${val.licenseId || '-'} • Pin: ${val.pincode || '-'}</div>
+              <div class="small muted">Assigned: ${val.assignedUserId || ''} ${Array.isArray(val.assignedToUserIds) ? '• ' + val.assignedToUserIds.join(', ') : ''}</div>
+              <div class="small muted">Address: ${val.address || '-'}</div>
+            </div>
+            <div class="text-right">
+              <button data-key="${key}" class="edit-dist px-2 py-1 mr-2 border rounded text-sm">Edit</button>
+              <button data-key="${key}" class="del-dist px-2 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
+            </div>
+          `;
+                wrapper.querySelector('.edit-dist').addEventListener('click', async (e) => {
+                    const key = e.currentTarget.dataset.key;
+                    const snap = await get(rtdbRef(db, `distributors/${key}`));
+                    if (!snap.exists()) return;
+                    fillDistForm(snap.val());
+                    editingDistKey = key;
+                    distFormEls.saveBtn.classList.add('hidden');
+                    distFormEls.updateBtn.classList.remove('hidden');
+                    distFormEls.cancelBtn.classList.remove('hidden');
+                    distFormEls.msg.textContent = 'Editing...';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                
+                wrapper.querySelector('.del-dist').addEventListener('click', async (e) => {
+                    const key = e.currentTarget.dataset.key;
+                    if (!confirm('Delete this distributor?')) return;
+                    try {
+                        await remove(rtdbRef(db, `distributors/${key}`));
+                        loadAllDistributors();
+                    } catch (err) {
+                        console.error('del dist', err);
+                        alert('Delete failed');
+                    }
+                });
+
+                distListEl.appendChild(wrapper);
+            });
+
+        } catch (err) {
+            console.error('load dist', err);
+            distListEl.innerHTML = '<div class="muted">Error loading distributors.</div>';
+        }
+    }
+
+    // ---------- Users (view only) ----------
+    async function loadAllUsers() {
+        userListEl.innerHTML = 'Loading...';
+        try {
+            const snap = await get(rtdbRef(db, 'users'));
+            if (!snap.exists()) {
+                userListEl.innerHTML = '<div class="muted">No users yet.</div>';
+                return;
+            }
+            const obj = snap.val();
+            const entries = Object.entries(obj).sort((a, b) => new Date(b[1].createdAt || 0) - new Date(a[1].createdAt || 0));
+            userListEl.innerHTML = '';
+            entries.forEach(([uid, val]) => {
+                const el = document.createElement('div');
+                el.className = 'p-3 border rounded';
+                el.innerHTML = `
+            <div class="font-semibold">${val.displayName || val.name || (val.email || uid)}</div>
+            <div class="small muted">UID: ${uid}</div>
+            <div class="small muted">Email: ${val.email || '—'} • Role: ${val.role || 'user'}</div>
+            <div class="small muted">Meta: ${val.phone || ''} ${val.pincode ? '• ' + val.pincode : ''}</div>
+          `;
+                userListEl.appendChild(el);
+            });
+        } catch (err) {
+            console.error('load users', err);
+            userListEl.innerHTML = '<div class="muted">Error loading users.</div>';
+        }
+    }
+
+    // ---------- initial clears ----------
+    clearSoilForm();
+    clearDistForm();
+
+    // Re-attach event listeners after initial clear if needed, though they are attached globally above.
+    // The original script correctly attached form handlers globally, so no change needed here.
+    
+
+    </script>
+</body>
+
+</html>

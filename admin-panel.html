@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AgroSmart — Admin Panel</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #4CAF50;
+      --soil-dark: #5D4037;
+      --cream-white: #F9FBE7
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--cream-white);
+      color: var(--soil-dark);
+      margin: 0;
+      overflow-x: hidden
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.25rem;
+      border: 1px solid rgba(139, 195, 74, 0.08);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06)
+    }
+
+    .input {
+      width: 100%;
+      padding: .6rem;
+      border: 1px solid #e5e7eb;
+      border-radius: .5rem
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <nav class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+      <div>
+        <div class="logo text-2xl text-[var(--primary-green)]">AgroSmart</div>
+        <div class="text-xs text-gray-600 -mt-1">Admin Panel</div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="admin-dashboard.html" class="text-gray-700 font-medium">Dashboard</a>
+        <a href="index.html" class="text-gray-700 font-medium">Home</a>
+        <button id="btn-logout"
+          class="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition font-medium text-sm">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="pt-28 pb-8 bg-[var(--primary-green)]/90 text-white">
+    <div class="max-w-7xl mx-auto px-8">
+      <h1 class="text-4xl md:text-5xl font-bold">Admin Panel — Manage Data</h1>
+      <p class="mt-2 text-lg">Add, edit or remove soil samples and distributors. View registered users.</p>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-8 py-10">
+    <div class="grid lg:grid-cols-3 gap-8">
+
+      <!-- Left: Add Soil Sample -->
+      <div class="section-card">
+        <h3 class="font-bold text-lg mb-3">Add / Edit Soil Sample</h3>
+
+        <form id="soilForm" class="space-y-3">
+          <input class="input" id="soilSampleId" placeholder="Sample ID (e.g. S-2025-001)" required />
+          <select class="input" id="soilFarmerSelect">
+            <option value="">Select Farmer (loading...)</option>
+          </select>
+          <input class="input" id="soilFarmName" placeholder="Farm Name" required />
+          <input class="input" id="soilLocation" placeholder="City Name" required />
+          <input class="input" id="soilDateCollected" type="date" required />
+          <input class="input" id="soilDateAnalyzed" type="date" required />
+          <input class="input" id="soilTexture" placeholder="Texture (e.g. Silt)" required />
+          <input class="input" id="soilPH" placeholder="pH (number)" required />
+          <input class="input" id="soilEC" placeholder="EC (number)" required />
+          <input class="input" id="soilN" placeholder="N (number)" required />
+          <input class="input" id="soilP" placeholder="P (number)" required />
+          <input class="input" id="soilK" placeholder="K (number)" required />
+          <input class="input" id="soilOC" placeholder="OC (number)" />
+          <input class="input" id="soilMicron" placeholder="Micronutrients (text/values)" />
+          <textarea class="input" id="soilNotes" placeholder="Notes"></textarea>
+
+          <div class="flex gap-2">
+            <button id="soilAddBtn" class="px-4 py-2 bg-[var(--primary-green)] text-white rounded">Add Sample</button>
+            <button id="soilUpdateBtn" class="px-4 py-2 bg-yellow-500 text-white rounded">Update</button>
+            <button id="soilClearBtn" type="button" class="px-4 py-2 bg-gray-200 rounded">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Middle: Distributors -->
+      <div class="section-card">
+        <h3 class="font-bold text-lg mb-3">Add / Edit Distributor</h3>
+
+        <form id="distForm" class="space-y-3">
+          <input class="input" id="distName" placeholder="Name" required />
+          <input class="input" id="distEmail" type="email" placeholder="Email" required />
+          <input class="input" id="distPhone" placeholder="Phone (10 digits)" pattern="[0-9]{10}" required />
+          <input class="input" id="distLicense" placeholder="License ID" required />
+          <input class="input" id="distPincode" placeholder="Pincode" required />
+          <input class="input" id="distAddress" placeholder="Address" />
+          <select class="input" id="distStatus">
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+
+          <div class="flex gap-2">
+            <button id="distAddBtn" class="px-4 py-2 bg-[var(--primary-green)] text-white rounded">Add
+              Distributor</button>
+            <button id="distUpdateBtn" class="px-4 py-2 bg-yellow-500 text-white rounded">Update</button>
+            <button id="distClearBtn" type="button" class="px-4 py-2 bg-gray-200 rounded">Clear</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right: Lists and Users -->
+      <div class="section-card">
+        <h3 class="font-bold text-lg mb-3">Soil Samples</h3>
+        <div id="soilListContainer" class="space-y-2 text-sm max-h-[35vh] overflow-auto mb-4">
+          Loading samples...
+        </div>
+
+        <h3 class="font-bold text-lg mt-6 mb-3">Distributors</h3>
+        <div id="distListContainer" class="space-y-2 text-sm max-h-[25vh] overflow-auto mb-4">
+          Loading distributors...
+        </div>
+
+        <h3 class="font-bold text-lg mt-6 mb-3">Registered Users</h3>
+        <div id="usersListContainer" class="space-y-2 text-sm max-h-[25vh] overflow-auto">
+          Loading users...
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="bg-[#0f2912] text-white py-8 text-center">© 2025 AgroSmart — Admin Panel</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    // UPDATED IMPORTS: Added getDoc, which is used for single-document fetches (like edit)
+    import {
+      getFirestore, collection, addDoc, doc, getDocs, updateDoc, deleteDoc, query, where, orderBy, getDoc
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD7gunTzcn5MGt2HhKohq1CT_YhXLCvuE0",
+      authDomain: "soil-farming-31fdc.firebaseapp.com",
+      databaseURL: "https://soil-farming-31fdc-default-rtdb.firebaseio.com",
+      projectId: "soil-farming-31fdc",
+      storageBucket: "soil-farming-31fdc.firebasestorage.app",
+      messagingSenderId: "218449894591",
+      appId: "1:218449894591:web:cd5a0ba2ff95e8c3bf3a0a",
+      measurementId: "G-CZK17511XC"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // DOM
+    const soilForm = document.getElementById('soilForm');
+    const soilAddBtn = document.getElementById('soilAddBtn');
+    const soilUpdateBtn = document.getElementById('soilUpdateBtn');
+    const soilClearBtn = document.getElementById('soilClearBtn');
+    const soilListContainer = document.getElementById('soilListContainer');
+    const soilFarmerSelect = document.getElementById('soilFarmerSelect');
+
+    const distForm = document.getElementById('distForm');
+    const distAddBtn = document.getElementById('distAddBtn');
+    const distUpdateBtn = document.getElementById('distUpdateBtn');
+    const distClearBtn = document.getElementById('distClearBtn');
+    const distListContainer = document.getElementById('distListContainer');
+
+    const usersListContainer = document.getElementById('usersListContainer');
+    const logoutBtn = document.getElementById('btn-logout');
+
+    // state
+    let editingSoilId = null;
+    let editingDistId = null;
+
+    // auth guard
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = 'index.html'; return; }
+
+      // **FIX: Check role from Firestore user document**
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        const role = userDoc.exists() ? userDoc.data().role : null;
+
+        if (role !== 'admin') {
+          alert('Access denied — Admins only. Redirecting to User Dashboard.');
+          window.location.href = 'user-dashboard.html'; // Redirect non-admins to user dashboard
+          return;
+        }
+      } catch (e) {
+        console.error('Role check failed:', e);
+        alert('Security check failed. Logging out.');
+        await signOut(auth);
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // load lists
+      loadFarmersDropdown();
+      loadSoilList();
+      loadDistList();
+      loadUsersList();
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'index.html';
+    });
+
+    // ---------------------------
+    // Validation helpers
+    function isEmailValid(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    function isPhoneValid(phone) {
+      return /^[0-9]{10}$/.test(phone);
+    }
+    function isNumber(val) {
+      return val === '' ? true : !isNaN(Number(val));
+    }
+
+    // ---------------------------
+    // Load farmers dropdown (from users collection where role == 'user')
+    async function loadFarmersDropdown() {
+      soilFarmerSelect.innerHTML = '<option value="">Select Farmer</option>';
+      try {
+        const q = query(collection(db, 'users'), where('role', '==', 'user'), orderBy('email')); // Added orderBy
+        const snapshot = await getDocs(q);
+        snapshot.forEach(docSnap => {
+          const d = docSnap.data();
+          const opt = document.createElement('option');
+          opt.value = docSnap.id;
+          opt.text = d.fullName ? `${d.fullName} — ${d.email}` : d.email;
+          opt.dataset.email = d.email || '';
+          soilFarmerSelect.appendChild(opt);
+        });
+      } catch (err) {
+        console.error('Error loading farmers', err);
+      }
+    }
+
+    // ---------------------------
+    // Add Soil Sample
+    soilAddBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      // validate required
+      const sampleId = document.getElementById('soilSampleId').value.trim();
+      const farmerUid = document.getElementById('soilFarmerSelect').value;
+      const farmName = document.getElementById('soilFarmName').value.trim();
+      const location = document.getElementById('soilLocation').value.trim();
+      const dateCollected = document.getElementById('soilDateCollected').value;
+      const dateAnalyzed = document.getElementById('soilDateAnalyzed').value;
+      const texture = document.getElementById('soilTexture').value.trim();
+      const ph = document.getElementById('soilPH').value.trim();
+      const ec = document.getElementById('soilEC').value.trim();
+      const n = document.getElementById('soilN').value.trim();
+      const p = document.getElementById('soilP').value.trim();
+      const k = document.getElementById('soilK').value.trim();
+      const oc = document.getElementById('soilOC').value.trim();
+      const micron = document.getElementById('soilMicron').value.trim();
+      const notes = document.getElementById('soilNotes').value.trim();
+
+      // Simple validation
+      if (!sampleId || !farmerUid || !farmName || !location || !dateCollected || !dateAnalyzed || !texture) {
+        alert('Please fill required soil fields and select a farmer.');
+        return;
+      }
+      if (!isNumber(ph) || !isNumber(ec) || !isNumber(n) || !isNumber(p) || !isNumber(k)) {
+        alert('Please enter numeric values for pH/EC/N/P/K fields.');
+        return;
+      }
+      // Get farmer details for redundancy/display
+      const farmerOption = document.querySelector(`#soilFarmerSelect option[value="${farmerUid}"]`);
+      const farmerName = farmerOption ? farmerOption.text.split(' — ')[0].trim() : '';
+
+      try {
+        const payload = {
+          sampleId,
+          userId: farmerUid, // Use userId for filtering on user-dashboard
+          farmName,
+          farmerName: farmerName || 'N/A',
+          location,
+          dateCollected,
+          dateAnalyzed,
+          texture,
+          ph: ph === '' ? null : Number(ph),
+          ec: ec === '' ? null : Number(ec),
+          n: n === '' ? null : Number(n),
+          p: p === '' ? null : Number(p),
+          k: k === '' ? null : Number(k),
+          oc: oc === '' ? null : Number(oc),
+          micronutrients: micron || '',
+          notes: notes || '',
+          createdAt: Date.now()
+        };
+
+        const ref = await addDoc(collection(db, 'soilSamples'), payload);
+        console.log('Admin Action: Added soil sample', { id: ref.id, payload });
+        alert('Soil sample added.');
+        loadSoilList();
+        soilForm.reset();
+      } catch (err) {
+        console.error('Error adding soil sample', err);
+        alert('Failed to add sample. Check console.');
+      }
+    });
+
+    // Update soil
+    soilUpdateBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!editingSoilId) { alert('Select a sample from the list to edit.'); return; }
+      // read same fields
+      const sampleId = document.getElementById('soilSampleId').value.trim();
+      const farmerUid = document.getElementById('soilFarmerSelect').value;
+      const farmName = document.getElementById('soilFarmName').value.trim();
+      const location = document.getElementById('soilLocation').value.trim();
+      const dateCollected = document.getElementById('soilDateCollected').value;
+      const dateAnalyzed = document.getElementById('soilDateAnalyzed').value;
+      const texture = document.getElementById('soilTexture').value.trim();
+      const ph = document.getElementById('soilPH').value.trim();
+      const ec = document.getElementById('soilEC').value.trim();
+      const n = document.getElementById('soilN').value.trim();
+      const p = document.getElementById('soilP').value.trim();
+      const k = document.getElementById('soilK').value.trim();
+      const oc = document.getElementById('soilOC').value.trim();
+      const micron = document.getElementById('soilMicron').value.trim();
+      const notes = document.getElementById('soilNotes').value.trim();
+
+      if (!sampleId || !farmerUid) { alert('Please fill required fields.'); return; }
+      if (!isNumber(ph) || !isNumber(ec) || !isNumber(n) || !isNumber(p) || !isNumber(k)) {
+        alert('Please enter numeric values for pH/EC/N/P/K fields.');
+        return;
+      }
+
+      try {
+        const farmerOption = document.querySelector(`#soilFarmerSelect option[value="${farmerUid}"]`);
+        const farmerName = farmerOption ? farmerOption.text.split(' — ')[0].trim() : '';
+
+        const docRef = doc(db, 'soilSamples', editingSoilId);
+        await updateDoc(docRef, {
+          sampleId,
+          userId: farmerUid,
+          farmName,
+          farmerName: farmerName || 'N/A',
+          location, dateCollected, dateAnalyzed, texture,
+          ph: ph === '' ? null : Number(ph),
+          ec: ec === '' ? null : Number(ec),
+          n: n === '' ? null : Number(n),
+          p: p === '' ? null : Number(p),
+          k: k === '' ? null : Number(k),
+          oc: oc === '' ? null : Number(oc),
+          micronutrients: micron || '',
+          notes: notes || '',
+          updatedAt: Date.now()
+        });
+        console.log('Admin Action: Updated soil sample', editingSoilId);
+        alert('Soil sample updated.');
+        editingSoilId = null;
+        loadSoilList();
+        soilForm.reset();
+      } catch (err) {
+        console.error('Error updating sample', err);
+        alert('Update failed.');
+      }
+    });
+
+    // Clear soil form
+    soilClearBtn.addEventListener('click', () => { soilForm.reset(); editingSoilId = null; });
+
+    // ---------------------------
+    // Distributor add/update
+    distAddBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('distName').value.trim();
+      const email = document.getElementById('distEmail').value.trim();
+      const phone = document.getElementById('distPhone').value.trim();
+      const licenseId = document.getElementById('distLicense').value.trim();
+      const pincode = document.getElementById('distPincode').value.trim();
+      const address = document.getElementById('distAddress').value.trim();
+      const status = document.getElementById('distStatus').value;
+
+      if (!name || !email || !phone || !licenseId || !pincode) { alert('Please fill required distributor fields.'); return; }
+      if (!isEmailValid(email)) { alert('Invalid email.'); return; }
+      if (!isPhoneValid(phone)) { alert('Phone must be 10 digits.'); return; }
+
+      try {
+        const payload = { name, email, phone, licenseId, pincode, address: address || '', status, createdAt: Date.now() };
+        const ref = await addDoc(collection(db, 'distributors'), payload);
+        console.log('Admin Action: Added distributor', { id: ref.id, payload });
+        alert('Distributor added.');
+        distForm.reset();
+        loadDistList();
+      } catch (err) {
+        console.error('Error adding distributor', err);
+        alert('Failed to add distributor.');
+      }
+    });
+
+    distUpdateBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      if (!editingDistId) { alert('Select a distributor to update from the list.'); return; }
+      const name = document.getElementById('distName').value.trim();
+      const email = document.getElementById('distEmail').value.trim();
+      const phone = document.getElementById('distPhone').value.trim();
+      const licenseId = document.getElementById('distLicense').value.trim();
+      const pincode = document.getElementById('distPincode').value.trim();
+      const address = document.getElementById('distAddress').value.trim();
+      const status = document.getElementById('distStatus').value;
+
+      if (!name || !email || !phone) { alert('Please fill required fields.'); return; }
+      if (!isEmailValid(email)) { alert('Invalid email.'); return; }
+      if (!isPhoneValid(phone)) { alert('Phone must be 10 digits.'); return; }
+
+      try {
+        const docRef = doc(db, 'distributors', editingDistId);
+        await updateDoc(docRef, { name, email, phone, licenseId, pincode, address, status, updatedAt: Date.now() });
+        console.log('Admin Action: Updated distributor', editingDistId);
+        alert('Distributor updated.');
+        editingDistId = null;
+        loadDistList();
+        distForm.reset();
+      } catch (err) {
+        console.error('Error updating distributor', err);
+        alert('Update failed.');
+      }
+    });
+
+    distClearBtn.addEventListener('click', () => { distForm.reset(); editingDistId = null; });
+
+    // ---------------------------
+    // Load lists
+    async function loadSoilList() {
+      soilListContainer.innerHTML = 'Loading...';
+      try {
+        const q = query(collection(db, 'soilSamples'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        if (snap.empty) { soilListContainer.innerHTML = '<div class="text-gray-500">No soil samples yet.</div>'; return; }
+        soilListContainer.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data();
+          const id = docSnap.id;
+          const el = document.createElement('div');
+          el.className = 'p-2 border rounded';
+          el.innerHTML = `
+            <div class="font-semibold">${d.sampleId || 'Sample'}</div>
+            <div class="text-xs text-gray-600">${d.farmerName || ''} • ${d.farmName || ''} • ${d.location || ''}</div>
+            <div class="mt-2 text-xs">
+              <button data-id="${id}" class="soil-edit px-2 py-1 bg-yellow-300 rounded text-xs">Edit</button>
+              <button data-id="${id}" class="soil-delete px-2 py-1 bg-red-500 text-white rounded text-xs">Delete</button>
+            </div>
+          `;
+          soilListContainer.appendChild(el);
+        });
+
+        // attach listeners
+        document.querySelectorAll('.soil-edit').forEach(btn => btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          // FIX: Using imported getDoc and doc directly
+          const docSnap = await getDoc(doc(db, 'soilSamples', id));
+          const d = docSnap.data();
+          // populate form
+          document.getElementById('soilSampleId').value = d.sampleId || '';
+          document.getElementById('soilFarmName').value = d.farmName || '';
+          document.getElementById('soilLocation').value = d.location || '';
+          document.getElementById('soilDateCollected').value = d.dateCollected || '';
+          document.getElementById('soilDateAnalyzed').value = d.dateAnalyated || '';
+          document.getElementById('soilTexture').value = d.texture || '';
+          document.getElementById('soilPH').value = d.ph ?? '';
+          document.getElementById('soilEC').value = d.ec ?? '';
+          document.getElementById('soilN').value = d.n ?? '';
+          document.getElementById('soilP').value = d.p ?? '';
+          document.getElementById('soilK').value = d.k ?? '';
+          document.getElementById('soilOC').value = d.oc ?? '';
+          document.getElementById('soilMicron').value = d.micronutrients || '';
+          document.getElementById('soilNotes').value = d.notes || '';
+          // set farmer select
+          if (d.userId) { document.getElementById('soilFarmerSelect').value = d.userId; }
+          editingSoilId = id;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }));
+
+        document.querySelectorAll('.soil-delete').forEach(btn => btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          if (!confirm('Delete soil sample?')) return;
+          try {
+            await deleteDoc(doc(db, 'soilSamples', id));
+            console.log('Admin Action: Deleted soil sample', id);
+            loadSoilList();
+          } catch (err) { console.error('Delete failed', err); alert('Delete failed'); }
+        }));
+
+      } catch (err) {
+        console.error('Error loading soil list', err);
+        soilListContainer.innerHTML = '<div class="text-red-500">Error loading samples.</div>';
+      }
+    }
+
+    async function loadDistList() {
+      distListContainer.innerHTML = 'Loading...';
+      try {
+        const q = query(collection(db, 'distributors'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        if (snap.empty) { distListContainer.innerHTML = '<div class="text-gray-500">No distributors yet.</div>'; return; }
+        distListContainer.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data(); const id = docSnap.id;
+          const el = document.createElement('div'); el.className = 'p-2 border rounded';
+          el.innerHTML = `
+            <div class="font-semibold">${d.name || ''}</div>
+            <div class="text-xs text-gray-600">${d.email || ''} • ${d.phone || ''} • ${d.status}</div>
+            <div class="mt-2 text-xs">
+              <button data-id="${id}" class="dist-edit px-2 py-1 bg-yellow-300 rounded text-xs">Edit</button>
+              <button data-id="${id}" class="dist-delete px-2 py-1 bg-red-500 text-white rounded text-xs">Delete</button>
+            </div>
+          `;
+          distListContainer.appendChild(el);
+        });
+
+        document.querySelectorAll('.dist-edit').forEach(btn => btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          // FIX: Using imported getDoc and doc directly
+          const docSnap = await getDoc(doc(db, 'distributors', id));
+          const d = docSnap.data();
+          document.getElementById('distName').value = d.name || '';
+          document.getElementById('distEmail').value = d.email || '';
+          document.getElementById('distPhone').value = d.phone || '';
+          document.getElementById('distLicense').value = d.licenseId || '';
+          document.getElementById('distPincode').value = d.pincode || '';
+          document.getElementById('distAddress').value = d.address || '';
+          document.getElementById('distStatus').value = d.status || 'Active';
+          editingDistId = id;
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }));
+
+        document.querySelectorAll('.dist-delete').forEach(btn => btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          if (!confirm('Delete distributor?')) return;
+          try {
+            await deleteDoc(doc(db, 'distributors', id));
+            console.log('Admin Action: Deleted distributor', id);
+            loadDistList();
+          } catch (err) { console.error('Delete failed', err); alert('Delete failed'); }
+        }));
+
+      } catch (err) {
+        console.error('Error loading distributors', err);
+        distListContainer.innerHTML = '<div class="text-red-500">Error loading distributors.</div>';
+      }
+    }
+
+    async function loadUsersList() {
+      usersListContainer.innerHTML = 'Loading...';
+      try {
+        const q = query(collection(db, 'users'), orderBy('role'));
+        const snap = await getDocs(q);
+        if (snap.empty) { usersListContainer.innerHTML = '<div class="text-gray-500">No registered users yet.</div>'; return; }
+        usersListContainer.innerHTML = '';
+        snap.forEach(docSnap => {
+          const d = docSnap.data(); const id = docSnap.id;
+          const el = document.createElement('div'); el.className = 'p-2 border rounded';
+          el.innerHTML = `<div class="font-semibold">${d.fullName || d.email || 'User'}</div><div class="text-xs text-gray-600">${d.email || ''} • ${d.phone || ''} • <strong>${d.role || 'user'}</strong></div>`;
+          usersListContainer.appendChild(el);
+        });
+      } catch (err) {
+        console.error('Error loading users', err);
+        usersListContainer.innerHTML = '<div class="text-red-500">Error loading users.</div>';
+      }
+    }
+
+    // ---------------------------
+    // Utility: helpers used earlier (keep for completeness)
+    function isEmailValid(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+    function isPhoneValid(phone) { return /^[0-9]{10}$/.test(phone); }
+    function isNumber(val) { return val === '' ? true : !isNaN(Number(val)); }
+
+  </script>
+</body>
+
+</html>

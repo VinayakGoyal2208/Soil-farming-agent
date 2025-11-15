@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AgroSmart — User Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-green: #4CAF50;
+      --soil-dark: #5D4037;
+      --cream-white: #F9FBE7;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--cream-white);
+      color: var(--soil-dark);
+      margin: 0;
+    }
+
+    h1, h2, h3, .logo {
+      font-family: 'Quicksand', sans-serif;
+      color: var(--soil-dark);
+      font-weight: 700;
+    }
+
+    .section-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(139,195,74,0.08);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="fixed top-0 left-0 right-0 bg-white/95 shadow-sm backdrop-blur-sm z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div>
+        <div class="logo text-2xl text-[var(--primary-green)]">AgroSmart</div>
+        <div class="text-xs text-gray-600 -mt-1">User Dashboard</div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <a href="index.html" class="text-gray-700 font-medium text-[var(--primary-green)]">Home</a>
+        <a href="about.html" class="text-gray-700 font-medium">About</a>
+        <a href="contact.html" class="text-gray-700 font-medium">Contact</a>
+
+        <span id="userNameDisplay" class="italic text-gray-700 text-sm"></span>
+
+        <button id="btnLogout" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-full">
+          Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <section class="pt-28 pb-8 bg-[var(--primary-green)]/90 text-white">
+    <div class="max-w-7xl mx-auto px-8">
+      <h1 class="text-4xl font-bold">Welcome to Your Dashboard</h1>
+      <p class="mt-2 text-lg">View your soil reports and distributor details below.</p>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="max-w-7xl mx-auto px-8 py-10 space-y-10">
+
+    <!-- Soil Section -->
+    <section class="section-card">
+      <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">My Soil Reports</h2>
+      <div id="soilList" class="space-y-4">
+        <p class="text-gray-500">Loading soil reports…</p>
+      </div>
+    </section>
+
+    <!-- Distributor Section -->
+    <section class="section-card">
+      <h2 class="text-2xl font-bold mb-4 text-[var(--primary-green)]">My Distributor Details</h2>
+      <div id="distributorList" class="space-y-4">
+        <p class="text-gray-500">Loading distributor details…</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#0f2912] text-white py-8 text-center">
+    <div class="max-w-7xl mx-auto">© 2025 AgroSmart — User Dashboard</div>
+  </footer>
+
+  <!-- FIREBASE LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getDatabase, ref, query, orderByChild, equalTo, get } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyD7gunTzcn5MGt2HhKohq1CT_YhXLCvuE0",
+      authDomain: "soil-farming-31fdc.firebaseapp.com",
+      databaseURL: "https://soil-farming-31fdc-default-rtdb.firebaseio.com",
+      projectId: "soil-farming-31fdc",
+      storageBucket: "soil-farming-31fdc.firebasestorage.app",
+      messagingSenderId: "218449894591",
+      appId: "1:218449894591:web:cd5a0ba2ff95e8c3bf3a0a",
+      measurementId: "G-CZK17511XC"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    const soilList = document.getElementById("soilList");
+    const distributorList = document.getElementById("distributorList");
+    const userNameDisplay = document.getElementById("userNameDisplay");
+
+    // helper sort
+    function processAndSortData(obj, key = 'createdAt') {
+      if (!obj) return [];
+      const arr = Object.values(obj);
+      arr.sort((a, b) => new Date(b[key] || 0) - new Date(a[key] || 0));
+      return arr;
+    }
+
+    // AUTH CHECK
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      // check role
+      const roleSnap = await fetch(`${firebaseConfig.databaseURL}/users/${user.uid}/role.json`).then(r => r.json());
+      if (roleSnap === "admin") {
+        window.location.href = "admin-dashboard.html";
+        return;
+      }
+
+      userNameDisplay.textContent = user.email;
+
+      const uid = user.uid;
+
+      // Load Soil Reports for user
+      try {
+        const soilRef = ref(db, "soil_samples");
+        const q = query(soilRef, orderByChild("userId"), equalTo(uid));
+        const snap = await get(q);
+
+        if (!snap.exists()) {
+          soilList.innerHTML = `<p class="text-gray-500">No soil reports found.</p>`;
+        } else {
+          const data = processAndSortData(snap.val());
+          soilList.innerHTML = data.map(d => `
+            <div class="p-4 border rounded">
+              <h3 class="font-semibold text-lg">${d.sampleId || "Sample"}</h3>
+              <p class="text-sm text-gray-600">${d.farmName || ""}</p>
+              <p class="text-sm text-gray-500">Collected: ${d.dateCollected || "N/A"} | Analyzed: ${d.dateAnalyzed || "N/A"}</p>
+
+              <div class="mt-2 text-sm">
+                <strong>N:</strong> ${d.n} |
+                <strong>P:</strong> ${d.p} |
+                <strong>K:</strong> ${d.k} |
+                <strong>pH:</strong> ${d.ph}
+              </div>
+
+              <p class="text-xs text-gray-500 mt-2">Notes: ${d.notes || "-"}</p>
+            </div>
+          `).join("");
+        }
+      } catch (e) {
+        console.error("Soil error", e);
+        soilList.innerHTML = `<p class="text-red-500">Error loading soil reports.</p>`;
+      }
+
+      // Load Distributors for user
+      try {
+        const snap = await get(ref(db, "distributors"));
+        const assigned = [];
+
+        if (snap.exists()) {
+          const all = Object.values(snap.val());
+          all.forEach(d => {
+            if (
+              d.assignedUserId === uid ||
+              (Array.isArray(d.assignedToUserIds) && d.assignedToUserIds.includes(uid)) ||
+              d.userId === uid
+            ) {
+              assigned.push(d);
+            }
+          });
+        }
+
+        if (assigned.length === 0) {
+          distributorList.innerHTML = `<p class="text-gray-500">No distributor assigned yet.</p>`;
+        } else {
+          distributorList.innerHTML = assigned.map(d => `
+            <div class="p-4 border rounded">
+              <h3 class="font-semibold">${d.name}</h3>
+              <p class="text-sm text-gray-600">${d.email} • ${d.phone}</p>
+              <p class="text-sm mt-1">License: ${d.licenseId} • Pincode: ${d.pincode}</p>
+              <p class="text-xs text-gray-500 mt-2">Address: ${d.address || "-"}</p>
+            </div>
+          `).join("");
+        }
+
+      } catch (e) {
+        console.error("Dist error", e);
+        distributorList.innerHTML = `<p class="text-red-500">Error loading distributors.</p>`;
+      }
+
+    });
+
+    // Logout handler
+    document.getElementById("btnLogout").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+
+  </script>
+
+</body>
+</html>
